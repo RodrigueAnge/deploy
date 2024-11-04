@@ -53,4 +53,5 @@ jobs:
         SOURCE: "./dist/"
         REMOTE_HOST: "ec2-98-84-226-75.compute-1.amazonaws.com"
         REMOTE_USER: "ubuntu"
-        TARGET: "/var/www/html/angular-demo/"
+        TARGET: "/home/ubuntu/html/angular-demo/"
+        #TARGET: "/var/www/html/angular-demo/"
