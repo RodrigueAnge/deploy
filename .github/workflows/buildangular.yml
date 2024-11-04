@@ -44,8 +44,13 @@ jobs:
         path: ./dist/
         retention-days: 7
         overwrite: true
-
-#     name: Install Angular 16.1.4
-#     uses: actions/angular-github-actions
-#     with:
-#      version: 16.1.4
+        
+  #5. Copy the artifact to EC2 instance.
+    - name: Deploy to my EC2 instance
+      uses: easingthemes/ssh-deploy@v2.1.5
+      with:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY}}
+        SOURCE: "./dist/"
+        REMOTE_HOST: "ec2-98-84-226-75.compute-1.amazonaws.com"
+        REMOTE_USER: "ubuntu"
+        TARGET: "/var/www/html/angular-demo/"
