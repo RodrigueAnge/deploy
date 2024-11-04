@@ -1,0 +1,38 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    # Define the type of server required
+    runs-on: ubuntu-latest
+    environment: AWS Production
+    name: Portal - Deploy
+    needs: Build_Code
+    steps:
+      #1. Configure AWS Credentials
+      #   Here we use the ARN of the assume role created in the above step.
+      #  This gets the temporary credentials and saves it for using in next step
+      #   That is the reason we gave the write permission earlier.
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ secrets.ASSUME_ROLE_ARN }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ vars.AWS_REGION }}
+
+      #2. Download the artefact that we created in the previous job
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with: 
+          name: my-portal-artifact
+          path: ./dist/
+          
+      #3. Copy the artifact to S3 bucket.
+      - name: Copy to S3 Bucket
+        run: |
+          aws s3 sync ./dist/my-portal/browser/ ${{ secrets.PORTFOLIO_S3_BUCKET_URL }}
